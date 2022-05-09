@@ -6,6 +6,7 @@ import thoughtImageUrl from "../../images/thought.svg";
 import { useState } from "react";
 import { FeedbackTypeStep } from "./Steps/FeedbackTypeStep";
 import { FeedbackContentStep } from "./Steps/FeedbackContentStep";
+import { FeedbackSuccessStep } from "./Steps/FeedbackSuccessStep";
 
 export const feedbackTypes = {
   BUG: {
@@ -38,19 +39,33 @@ export function WidgetForm() {
   const [feedbackSent, setFeedbackSent] = useState(false);
 
   function handleRestarFeedback() {
+    setFeedbackSent(false);
     setFeedbackType(null);
   }
 
   return (
     <div className="bg-zinc-900 p-4 relative rounded-2xl mb-4 flex flex-col items-center shadow-lg w-[calc(100vw-2rem)] md:w-auto">
-      {!feedbackType ? (
-        <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType} />
-      ) : (
-        <FeedbackContentStep
-          feedbackType={feedbackType}
-            onFeedbackRestartRequested={handleRestarFeedback}
-            onFeedbackSent={() => setFeedbackSent(true)}
+      
+      {/*A condição abaixo irá lidar com o estado de envio do feedback. Caso o feedback não esteja
+      no estado de enviado, será feito a manipulação to tipo de feedback e uso do componente de
+      acordo com o tipo*/}
+
+      {feedbackSent ? (
+        <FeedbackSuccessStep
+          onFeedbackRestartRequested={handleRestarFeedback}
         />
+      ) : (
+        <>
+          {!feedbackType ? (
+            <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType} />
+          ) : (
+            <FeedbackContentStep
+              feedbackType={feedbackType}
+              onFeedbackRestartRequested={handleRestarFeedback}
+              onFeedbackSent={() => setFeedbackSent(true)}
+            />
+          )}
+        </>
       )}
 
       <footer className="text-xs text-neutral-400 ">
